@@ -1,29 +1,35 @@
-function read_map(fname::String)
-    lines = readlines(fname)
+function read_map(nom_fichier::String)
 
-    # Trouver la ligne "map"
-    idx = findfirst(x -> occursin("map", x), lines)
-    grid_lines = lines[idx+1:end]
+    lignes = readlines(nom_fichier)
 
-    height = length(grid_lines)
-    width = length(grid_lines[1])
+    index_deb = findfirst(ligne -> strip(ligne) == "map", lignes)
+    if index_deb === nothing
+        error("Mot 'map' introuvable dans le fichier.")
+    end
+    l_grille = lignes[index_deb+1:end]
+    
+    println("Carte étudiée : ", nom_fichier)
+    
+    hauteur = length(l_grille)
+    largeur = length(l_grille[1])
 
-    grid = Matrix{Char}(undef, height, width)
+    grille = Matrix{Char}(undef, hauteur, largeur)
 
-    for i in 1:height
-        for j in 1:width
-            grid[i,j] = grid_lines[i][j]
+    for i in 1:hauteur
+        for j in 1:largeur
+            grille[i,j] = l_grille[i][j]
         end
     end
 
-    return grid
+    return grille
 end
 
 
-function move_cost(cell::Char)
-    if cell == 'S'
+function cout_deplacement(cellule::Char)
+
+    if cellule== 'S'
         return 5
-    elseif cell == 'W'
+    elseif cellule== 'W'
         return 8
     else
         return 1
@@ -31,20 +37,28 @@ function move_cost(cell::Char)
 end
 
 
-function neighbors(grid, pos)
-    i, j = pos
-    h, w = size(grid)
+function voisins_accessibles(grille, pos)
 
-    neigh = Tuple{Int,Int}[]
+    ligne, colonne = pos
 
-    for (di,dj) in [(1,0),(-1,0),(0,1),(0,-1)]
-        ni, nj = i+di, j+dj
-        if 1 ≤ ni ≤ h && 1 ≤ nj ≤ w
-            if grid[ni,nj] != '@'
-                push!(neigh, (ni,nj))
-            end
+    hauteur, largeur = size(grille)
+
+    l_voisins = Tuple{Int,Int}[]
+
+    for (decalage_ligne, decalage_colonne) in [(1,0), (-1,0), (0,1), (0,-1)]
+
+        nvl_ligne  = ligne + decalage_ligne
+        nvl_colonne = colonne + decalage_colonne
+
+        if 1 ≤ nvl_ligne ≤ hauteur && 1 ≤ nvl_colonne ≤ largeur
+
+          cellule = grille[nvl_ligne, nvl_colonne]
+
+          if cellule != '@' && cellule != 'T'
+                 push!(l_voisins, (nvl_ligne, nvl_colonne))
+          end
         end
     end
-
-    return neigh
+    
+    return l_voisins
 end

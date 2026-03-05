@@ -1,9 +1,21 @@
-cd(@__DIR__)
-
 include("map_reader.jl")
-
-grid = read_map("../dat/didactic.map")
-
-println("Taille de la grille : ", size(grid))
-println("Case (1,1) : ", grid[1,1])
-println("Voisins de (5,5) : ", neighbors(grid, (5,5)))
+include("utils.jl")      #contient heuristique
+include("bfs.jl")
+include("dijkstra.jl")
+include("gluton.jl")
+include("astar.jl")
+# Départ et arrivée
+D = (100,100)
+A = (120,120)
+algoBFS("dat/8room_000.map", D, A)
+algoDijkstra("dat/8room_000.map", D, A)
+algoGlouton("dat/8room_000.map", D, (120,120))
+algoAstar("dat/8room_000.map", D, A)
+algoBFS("dat/Paris_2_256.map", D, A)
+algoDijkstra("dat/Paris_2_256.map", D, A)
+algoGlouton("dat/Paris_2_256.map", D, A)
+algoAstar("dat/Paris_2_256.map", D, A)
+algoBFS("dat/32room_000.map", D, A)
+algoDijkstra("dat/32room_000.map", D, A)
+algoGlouton("dat/32room_000.map", D, A)
+algoAstar("dat/32room_000.map", D, A)

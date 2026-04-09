@@ -1,23 +1,20 @@
 function algoBFS(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
+
     grille = read_map(fname)
-    
-    if grille[D...] == '@' || grille[D...] == 'T'
+
+    if grille[D...] == '@'
         error("Le point de départ est un obstacle.")
     end
 
-    if grille[A...] == '@' || grille[A...] == 'T'
-      error("Le point d'arrivée est un obstacle.")
+    if grille[A...] == '@'
+        error("Le point d'arrivée est un obstacle.")
     end
-    # File FIFO avec Vector
+
     file = [D]
-
-    visites = Set{Tuple{Int,Int}}()
-    push!(visites, D)
-
+    visites = Set{Tuple{Int,Int}}([D])
     parent = Dict{Tuple{Int,Int}, Tuple{Int,Int}}()
 
     nb_etats = 0
-    trouve = false
 
     while !isempty(file)
 
@@ -25,7 +22,6 @@ function algoBFS(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
         nb_etats += 1
 
         if courant == A
-            trouve = true
             break
         end
 
@@ -39,12 +35,11 @@ function algoBFS(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
         end
     end
 
-    if !trouve
+    if !(A in visites)
         println("Aucun chemin trouvé.")
         return nothing
     end
 
-    # Reconstruction du chemin
     chemin = Tuple{Int,Int}[]
     courant = A
 
@@ -57,9 +52,11 @@ function algoBFS(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
     reverse!(chemin)
 
     distance = length(chemin) - 1
+
     println("BFS ALGO")
     println("Distance D → A : ", distance)
     println("Number of states evaluated : ", nb_etats)
-    println("Path D → A : ", chemin)
+    #println("Path D → A : ", chemin)
+
     return distance, nb_etats, chemin
 end

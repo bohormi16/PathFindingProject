@@ -1,35 +1,33 @@
 function algoDijkstra(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
+
     grille = read_map(fname)
 
-    if grille[D...] == '@' || grille[D...] == 'T'
+    if grille[D...] == '@' 
         error("Le point de départ est un obstacle.")
     end
 
-    if grille[A...] == '@' || grille[A...] == 'T'
+    if grille[A...] == '@' 
         error("Le point d'arrivée est un obstacle.")
     end
 
-    # Initialisation
     distance = Dict{Tuple{Int,Int}, Float64}()
     precedent = Dict{Tuple{Int,Int}, Tuple{Int,Int}}()
     permanent = Set{Tuple{Int,Int}}()
 
-    # Initialiser toutes les distances à +∞
+    # Initialisation
     for i in 1:size(grille,1)
         for j in 1:size(grille,2)
-            if grille[i,j] != '@' && grille[i,j] != 'T'
+            if grille[i,j] != '@'
                 distance[(i,j)] = Inf
             end
         end
     end
 
     distance[D] = 0
-
     nb_etats = 0
 
     while true
 
-        # Trouver sommet non permanent de distance minimale
         u = nothing
         min_dist = Inf
 
@@ -51,7 +49,6 @@ function algoDijkstra(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
         push!(permanent, u)
         nb_etats += 1
 
-        # Relaxation des voisins
         for voisin in voisins_accessibles(grille, u)
 
             if !(voisin in permanent)
@@ -67,12 +64,11 @@ function algoDijkstra(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
         end
     end
 
-    if !(A in keys(precedent)) && A != D
+    if distance[A] == Inf
         println("Aucun chemin trouvé.")
         return nothing
     end
 
-    # Reconstruction du chemin
     chemin = Tuple{Int,Int}[]
     courant = A
 
@@ -83,9 +79,11 @@ function algoDijkstra(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
 
     push!(chemin, D)
     reverse!(chemin)
-    println("Dijkstra algo ")
+
+    println("Dijkstra algo")
     println("Distance D → A : ", distance[A])
     println("Number of states evaluated : ", nb_etats)
-    println("Path D → A : ", chemin)
+    #println("Path D → A : ", chemin)
+
     return distance[A], nb_etats, chemin
 end

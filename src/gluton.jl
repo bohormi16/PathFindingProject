@@ -1,32 +1,32 @@
 function algoGlouton(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
+
     grille = read_map(fname)
 
-    if grille[D...] == '@' || grille[D...] == 'T'
-        error("Le point de départ est un obstacle.")
+    if grille[D...] == '@'
+        error("Départ obstacle")
     end
 
-    if grille[A...] == '@' || grille[A...] == 'T'
-        error("Le point d'arrivée est un obstacle.")
+    if grille[A...] == '@' 
+        error("Arrivée obstacle")
     end
 
-    ouvert = [D]                      # liste ouverte
-    ferme = Set{Tuple{Int,Int}}()     # sommets visités
+    ouvert = [D]
+    ferme = Set{Tuple{Int,Int}}()
     parent = Dict{Tuple{Int,Int}, Tuple{Int,Int}}()
 
     nb_etats = 0
-    trouve = false
 
     while !isempty(ouvert)
 
-        # choisie le sommet avec heuristique minimale
-        courant = ouvert[argmin([heuristique(n, A) for n in ouvert])]
-        deleteat!(ouvert, findfirst(==(courant), ouvert))
+        h_values = [heuristique(n, A) for n in ouvert]
+        idx = argmin(h_values)
+        courant = ouvert[idx]
+        deleteat!(ouvert, idx)
 
         push!(ferme, courant)
         nb_etats += 1
 
         if courant == A
-            trouve = true
             break
         end
 
@@ -39,12 +39,11 @@ function algoGlouton(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
         end
     end
 
-    if !trouve
-        println("Aucun chemin trouvé.")
+    if !(A in keys(parent)) && A != D
+        println("Aucun chemin trouvé")
         return nothing
     end
 
-    # Reconstruction du chemin
     chemin = Tuple{Int,Int}[]
     courant = A
 
@@ -56,10 +55,15 @@ function algoGlouton(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
     push!(chemin, D)
     reverse!(chemin)
 
-    distance = length(chemin) - 1
-    println("Gluton algo ")
+    # correction distance
+    distance = 0
+    for i in 2:length(chemin)
+        distance += cout_deplacement(grille[chemin[i]...])
+    end
+
+    println("Glouton algo")
     println("Distance D → A : ", distance)
     println("Number of states evaluated : ", nb_etats)
-    println("Path D → A : ", chemin) 
+    #println("Path D → A : ", chemin)
     return distance, nb_etats, chemin
 end

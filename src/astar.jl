@@ -1,12 +1,12 @@
 function algoAstar(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
     grille = read_map(fname)
 
-    if grille[D...] == '@' || grille[D...] == 'T'
-        error("Le point de départ est un obstacle.")
+    if grille[D...] == '@'
+      error("Le point de départ est un obstacle.")
     end
 
-    if grille[A...] == '@' || grille[A...] == 'T'
-        error("Le point d'arrivée est un obstacle.")
+    if grille[A...] == '@'
+      error("Le point d'arrivée est un obstacle.")
     end
 
     ouvert = [D]
@@ -74,9 +74,9 @@ function algoAstar(fname::String, D::Tuple{Int,Int}, A::Tuple{Int,Int})
 
     push!(chemin, D)
     reverse!(chemin)
-    println("astra ALGO")
-    println("Distance D → A : ", g[A])
-    println("Number of states evaluated : ", nb_etats)
-    println("Path D → A : ", chemin)
+    #println("astra ALGO")
+    #println("Distance D → A : ", g[A])
+    #println("Number of states evaluated : ", nb_etats)
+    #println("Path D → A : ", chemin)
     return g[A], nb_etats, chemin
 end
